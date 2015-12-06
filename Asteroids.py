@@ -1,5 +1,6 @@
 # Spaceship - Erika ^^
 import simpleguitk as simplegui
+#import simplegui
 import random
 
 from Sprite import Sprite
