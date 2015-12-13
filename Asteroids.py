@@ -1,12 +1,13 @@
 # Spaceship - Erika ^^
-import simpleguitk as simplegui
-#import simplegui
+#import simpleguitk as simplegui #win
+import SimpleGUICS2Pygame.simpleguics2pygame as simplegui #linux
 import random
 
 from Sprite import Sprite
 from ImageInfo import ImageInfo
 from Ship import Ship
 from Utils import Utils
+from twisted.trial._synctest import Todo
 
 # user interface
 WIDTH = 800
@@ -25,33 +26,37 @@ MAX_ROCKS = 12
 SAFEDISTANCE = 45
 difficulty = [-1, 0.5]
 
+#resources
+RESOURCES = "http://localhost/resources/"
+FONT = "monospace"
+
 #  ------------- IMAGES ---------------------------#
 # art assets created by Kim Lathrop
 debris_info = ImageInfo([320, 240], [640, 480])
-debris_image = simplegui.load_image("http://127.0.0.1:8083/debris2_blue.png")
+debris_image = simplegui.load_image(RESOURCES + "debris2_blue.png")
 # nebula images - nebula_brown.png, nebula_blue.png
 nebula_info = ImageInfo([400, 300], [800, 600])
-nebula_image = simplegui.load_image("http://127.0.0.1:8083/nebula_blue.f2013.png")
+nebula_image = simplegui.load_image(RESOURCES + "nebula_blue.f2013.png")
 # splash image
 splash_info = ImageInfo([200, 150], [400, 300])
-splash_image = simplegui.load_image("http://127.0.0.1:8083/splash.png")
+splash_image = simplegui.load_image(RESOURCES + "splash.png")
 #https://googledrive.com/host/0B0ugO7CFvC4yNEVvc3dpamN6SFU/ricerocksgameover.png
-gameover_image = simplegui.load_image("http://127.0.0.1:8083/ricerocksgameover.png")
+gameover_image = simplegui.load_image(RESOURCES + "ricerocksgameover.png")
 # ship image
 ship_info = ImageInfo([45, 45], [90, 90], 35)
-ship_image = simplegui.load_image("http://127.0.0.1:8083/double_ship.png")
+ship_image = simplegui.load_image(RESOURCES + "double_ship.png")
 # asteroid images - asteroid_blue.png, asteroid_brown.png, asteroid_blend.png
 #self, center, size, radius = 0, lifespan = None, animated = False
 asteroid_info = ImageInfo([45, 45], [90, 90], 40)
-asteroid_image = simplegui.load_image("http://127.0.0.1:8083/asteroid_blue.png")
+asteroid_image = simplegui.load_image(RESOURCES + "asteroid_blue.png")
 # animated explosion - explosion_orange.png, explosion_blue.png, explosion_blue2.png, explosion_alpha.png
 explosion_info = ImageInfo([64, 64], [128, 128], 17, 24, True)
-explosion_image = simplegui.load_image("http://127.0.0.1:8083/explosion_alpha.png")
+explosion_image = simplegui.load_image(RESOURCES + "explosion_alpha.png")
 
-# ------------------- SOUNDS ----------------------------#
+# ------------------- SOUNDS ------------------------#
 # purchased from sounddogs.com
-soundtrack = simplegui.load_sound("http://127.0.0.1:8083/soundtrack.ogg")
-explosion_sound = simplegui.load_sound("http://127.0.0.1:8083/explosion.ogg")
+soundtrack = simplegui.load_sound(RESOURCES + "soundtrack.ogg")
+explosion_sound = simplegui.load_sound(RESOURCES + "explosion.ogg")
 
 
 def process_sprite_group(group, canvas):
@@ -69,7 +74,8 @@ def group_collide (group, other_object):
     for i in copy:
         if i.collide(other_object):
             #..the colliding object should be removed from the group
-            explosion_group.add(Sprite(i.get_position(),[0,0],0,0, explosion_image, explosion_info, WIDTH, HEIGHT, explosion_sound))
+            explosion_group.add(Sprite(i.get_position(),[0,0],0,0, explosion_image, explosion_info, 
+                                       WIDTH, HEIGHT, explosion_sound))
             group.discard(i)
 
             return True
@@ -89,7 +95,8 @@ def group_group_collide(group1, group2):
 #helper functions to the interface
 def reset():
     global score,my_ship, lives, time, started, missile, \
-        rock_group, cant_rocks, missile_group, gameover, explosion_group
+    rock_group, cant_rocks, missile_group, gameover, difficulty, explosion_group
+    explosion_group, difficulty
     score = 0
     lives = 3
     time = 0.5
@@ -132,6 +139,10 @@ def keyup(key):
             my_ship.thrust_off()
         elif (key == simplegui.KEY_MAP["down"]):
             my_ship.thrust_off()
+        elif (key == simplegui.KEY_MAP["P"] or key == simplegui.KEY_MAP["p"]):
+            #TODO
+            print "Pause";
+            
 
 
 def mouse_handler(position):
@@ -148,7 +159,8 @@ def draw(canvas):
     wtime = (time / 4) % WIDTH
     center = debris_info.get_center()
     size = debris_info.get_size()
-    canvas.draw_image(nebula_image, nebula_info.get_center(), nebula_info.get_size(), [WIDTH / 2, HEIGHT / 2], [WIDTH, HEIGHT])
+    canvas.draw_image(nebula_image, nebula_info.get_center(), nebula_info.get_size(), 
+                      [WIDTH / 2, HEIGHT / 2], [WIDTH, HEIGHT])
     canvas.draw_image(debris_image, center, size, (wtime - WIDTH / 2, HEIGHT / 2), (WIDTH, HEIGHT))
     canvas.draw_image(debris_image, center, size, (wtime + WIDTH / 2, HEIGHT / 2), (WIDTH, HEIGHT))
     if (started):
@@ -188,17 +200,27 @@ def draw(canvas):
             explosion.update()
     else:
         if (gameover):
-            canvas.draw_image(gameover_image, splash_info.center, splash_info.size, [WIDTH/2, HEIGHT/2], splash_info.size)
+            canvas.draw_image(gameover_image, splash_info.center, splash_info.size, 
+                              [WIDTH/2, HEIGHT/2], splash_info.size)
             soundtrack.rewind()
             my_ship.stopShipSound()
+            explosion_sound.rewind()
         else:
             canvas.draw_image(splash_image, splash_info.center, splash_info.size, [WIDTH/2, HEIGHT/2], splash_info.size)
 
     #score
-    canvas.draw_text("Lives", [30,30], 30, "White",  "monospace")
-    canvas.draw_text(str(lives), [65,60], 30, "White",  "monospace")
-    canvas.draw_text("Score", [650,30], 30, "White",  "monospace")
-    canvas.draw_text(str(score), [685,60], 30, "White",  "monospace")
+    canvas.draw_text("Lives", [30,30], 30, "White",  FONT)
+    canvas.draw_text(str(lives), [65,60], 30, "White",  FONT)
+    canvas.draw_text("Score", [650,30], 30, "White",  FONT)
+    score = 1200
+    if score < 10:
+        canvas.draw_text(str(score), [688,60], 30, "White",  FONT)
+    if score >= 10 and score < 100:
+        canvas.draw_text(str(score), [680,60], 30, "White",  FONT)
+    if score >= 100 and score < 1000:
+        canvas.draw_text(str(score), [672,60], 30, "White",  FONT)
+    if score >= 1000 and score < 10000:
+        canvas.draw_text(str(score), [662,60], 30, "White",  FONT)
 
 
 # timer handler that spawns a rock

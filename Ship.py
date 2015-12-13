@@ -1,4 +1,6 @@
-import simpleguitk as simplegui
+#import simpleguitk as simplegui #win
+import SimpleGUICS2Pygame.simpleguics2pygame as simplegui #linux
+#import simplegui
 from Sprite import Sprite
 from ImageInfo import ImageInfo
 from Utils import Utils
@@ -6,13 +8,16 @@ import math
 
 FRICTION = 0.97
 FACTOR = 2
-ship_thrust_sound = simplegui.load_sound("http://127.0.0.1:8083/thrust.ogg")
+#resources
+RESOURCES = "http://localhost/resources/"
+
+ship_thrust_sound = simplegui.load_sound(RESOURCES + "thrust.ogg")
 
 # missile image - shot1.png, shot2.png, shot3.png
 missile_info = ImageInfo([5,5], [10, 10], 3, 150)
-missile_image = simplegui.load_image("http://127.0.0.1:8083/shot2.png")
+missile_image = simplegui.load_image(RESOURCES + "shot2.png")
 
-missile_sound = simplegui.load_sound("http://127.0.0.1:8083/missile.ogg")
+missile_sound = simplegui.load_sound(RESOURCES + "missile.ogg")
 missile_sound.set_volume(.5)
 
 # Ship class
