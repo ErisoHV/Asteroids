@@ -17,7 +17,7 @@ I develop this game under Window operating system. I installed
 
 1. Install python 2.7
 2. Install <a href="http://www.pygame.org/download.shtml" target="_blank">pygame</a>
-3. Install <a href="http://askubuntu.com/a/635890" target="_blank">simplegui</a>
+3. Install <a href="https://pypi.python.org/pypi/SimpleGUICS2Pygame" target="_blank">simplegui</a>
 
 **Use**
 
