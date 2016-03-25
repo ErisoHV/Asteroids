@@ -1,5 +1,7 @@
 from Utils import Utils
 # Sprite class
+
+
 class Sprite:
     def __init__(self, pos, vel, ang, ang_vel, image, info, Wwidth, WHeight, sound = None):
         self.pos = [pos[0],pos[1]]
@@ -15,6 +17,9 @@ class Sprite:
         self.age = 0
         self.parentWidth = Wwidth
         self.parentHeight = WHeight
+
+
+
         if sound:
             sound.rewind()
             sound.play()

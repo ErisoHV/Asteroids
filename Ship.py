@@ -1,18 +1,18 @@
-import simpleguitk as simplegui
+import simpleguitk as simplegui #win
+#import SimpleGUICS2Pygame.simpleguics2pygame as simplegui #linux
+#import simplegui
 from Sprite import Sprite
 from ImageInfo import ImageInfo
 from Utils import Utils
-import math
+from Constants import *
 
-FRICTION = 0.97
-FACTOR = 2
-ship_thrust_sound = simplegui.load_sound("http://127.0.0.1:8083/thrust.ogg")
+ship_thrust_sound = simplegui.load_sound(THRUST)
 
 # missile image - shot1.png, shot2.png, shot3.png
 missile_info = ImageInfo([5,5], [10, 10], 3, 150)
-missile_image = simplegui.load_image("http://127.0.0.1:8083/shot2.png")
+missile_image = simplegui.load_image(SHOT)
 
-missile_sound = simplegui.load_sound("http://127.0.0.1:8083/missile.ogg")
+missile_sound = simplegui.load_sound(MISSILE)
 missile_sound.set_volume(.5)
 
 # Ship class
@@ -89,7 +89,8 @@ class Ship:
         #velocity of the missile
         vel = [self.vel[0] + FACTOR * forward[0] ,
         self.vel[1] + FACTOR * forward[1]]
-        missile_group.add(Sprite(pos, vel, self.angle, self.angle_vel, missile_image, missile_info, self.parentWidth,
+        missile_group.add(Sprite(pos, vel, self.angle, self.angle_vel, missile_image,
+                                 missile_info, self.parentWidth,
         self.parentHeight, missile_sound))
 
     def stopShipSound(self):
