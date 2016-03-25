@@ -344,7 +344,7 @@ def bonus_spawner():
                 type = 3
 
             if random_bonus >= 0.5 and random_bonus <= 1 \
-                    and len(bonus_group) == 0:
+                    and len(bonus_group) == 0 and len(rock_group) > 4:
                 #Explotar todos los asteroides
                 bonus = bonus_image4
                 type = 4

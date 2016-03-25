@@ -12,8 +12,12 @@ class Bonus:
         self.__bonus_info = ImageInfo([45, 45], [90, 90], 40)
         self.pos = [pos[0],pos[1]]
         self.type = bonus
-        self.sprite = Sprite(pos, [0.0, 0.0], 0, 0, image,
+        self.angle = 0
+        self.angle_vel = 0.003
+
+        self.sprite = Sprite(pos, [0.0, 0.0], self.angle, self.angle_vel, image,
                              self.__bonus_info, WIDTH, HEIGHT)
+
 
     def get_sprite(self):
         return self.sprite
@@ -28,6 +32,11 @@ class Bonus:
         self.sprite.update()
 
     def draw(self, canvas):
+        #angle
+        self.angle += self.angle_vel
+        #position (static)
+        self.pos[0] += self.pos[0]
+        self.pos[1] += self.pos[1]
         self.sprite.draw(canvas)
 
     def collide(self, other_object):

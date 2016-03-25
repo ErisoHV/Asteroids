@@ -3,7 +3,8 @@ from Utils import Utils
 
 
 class Sprite:
-    def __init__(self, pos, vel, ang, ang_vel, image, info, Wwidth, WHeight, sound = None):
+    def __init__(self, pos, vel, ang, ang_vel, image, info,
+                 Wwidth, WHeight, sound = None):
         self.pos = [pos[0],pos[1]]
         self.vel = [vel[0],vel[1]]
         self.angle = ang
