@@ -1,13 +1,11 @@
 # Spaceship - Erika ^^
-import simpleguitk as simplegui #win
-#import SimpleGUICS2Pygame.simpleguics2pygame as simplegui #linux
+import simpleguitk as simplegui  # win
+# import SimpleGUICS2Pygame.simpleguics2pygame as simplegui #linux
 import random
-
 from Sprite import Sprite
 from ImageInfo import ImageInfo
 from Ship import Ship
 from Bonus import *
-
 from Utils import Utils
 from Constants import *
 
@@ -21,7 +19,7 @@ explosion_group = set()
 rock_group = set()
 bonus_group = set()
 
-#game
+# game
 missile = False
 
 #  ------------- IMAGES ---------------------------#
@@ -38,11 +36,10 @@ gameover_image = simplegui.load_image(GAMEOVER)
 ship_info = ImageInfo([45, 45], [90, 90], 35)
 ship_image = simplegui.load_image(SHIP)
 # asteroid images - asteroid_blue.png, asteroid_brown.png, asteroid_blend.png
-#self, center, size, radius = 0, lifespan = None, animated = False
 asteroid_info = ImageInfo([45, 45], [90, 90], 40)
 asteroid_image = simplegui.load_image(ASTEROID)
 
-#bonus
+# bonus
 bonus_info = ImageInfo([45, 45], [90, 90], 40)
 bonus_image1 = simplegui.load_image(BONUS1)
 bonus_image2 = simplegui.load_image(BONUS2)
@@ -53,7 +50,7 @@ bonus_image4 = simplegui.load_image(BONUS4)
 explosion_info = ImageInfo([64, 64], [128, 128], 17, 24, True)
 explosion_image = simplegui.load_image(EXPLOSION)
 
-#bonus
+# bonus
 seconds = 0
 timer3 = None
 immortal = False
@@ -62,6 +59,8 @@ scoreBonus = False
 # ------------------- SOUNDS ------------------------#
 soundtrack = simplegui.load_sound(SOUNDTRACK)
 explosion_sound = simplegui.load_sound(EXPLOSIONSOUND)
+tick_tock_sound = simplegui.load_sound(TICKTOCKSOUND)
+
 
 def process_sprite_group(group, canvas):
     copy = group.copy()
@@ -73,62 +72,56 @@ def process_sprite_group(group, canvas):
 
 
 def process_bonus(bonus):
-    global lives,  explosion_group, cant_rocks, rock_group, timer3, score,\
-        immortal, scoreBonus, seconds
-    if bonus.type == 3:
+    global lives, explosion_group, cant_rocks, rock_group, timer3, score, \
+        immortal, scoreBonus, seconds, functionTimer
+    if bonus.type == 3:  # lives++
         lives += 1
-    elif bonus.type == 4:
+    elif bonus.type == 4:  # exploit all the asteroids
         copy = rock_group.copy()
-        print(len(copy))
         for i in copy:
             explosion_group.add(Sprite(i.get_position(), [0, 0], 0, 0,
-                                             explosion_image, explosion_info,
-                                               WIDTH, HEIGHT, explosion_sound))
+                                       explosion_image, explosion_info,
+                                       WIDTH, HEIGHT, explosion_sound))
             rock_group.discard(i)
             cant_rocks -= 1
             score += 1
-    elif bonus.type == 2:
-        scoreBonus = True
-        if timer3 is not None and immortal:
-            seconds = 0
+    else:
+        if bonus.type == 2:  #each asteroid is +2
+            scoreBonus = True
             immortal = False
-            timer3.stop()
-        timer3 = simplegui.create_timer(1000, bonus2_timer)
-        timer3.start()
-    elif bonus.type == 1:
-        immortal = True
-        if timer3 is not None and scoreBonus:
-            seconds = 0
+        elif bonus.type == 1:  #the asteroids not hurt you
+            immortal = True
             scoreBonus = False
+
+        if timer3 is not None:
             timer3.stop()
-        timer3 = simplegui.create_timer(1000, bonus1_timer)
+            seconds = 0
+
+        timer3 = simplegui.create_timer(1000, timer_bonus_1_2)
+        tick_tock_sound.rewind()
+        tick_tock_sound.play()
         timer3.start()
 
-def bonus2_timer():
-    global seconds,timer3, scoreBonus, immortal
+
+def timer_bonus_1_2():
+    global seconds, timer3, scoreBonus, immortal
     if seconds < 10:
         seconds += 1
     else:
+        seconds = 0
+        tick_tock_sound.rewind()
         scoreBonus = False
-        seconds = 0
-        timer3.stop()
-
-def bonus1_timer():
-    global seconds,timer3, immortal, scoreBonus
-    if seconds < 10:
-        seconds += 1
-    else:
         immortal = False
-        seconds = 0
-        timer3.stop()
+        timer3.stop
 
-def group_collide (group, other_object, isBonus = False):
+
+def group_collide(group, other_object, isBonus = False):
     global explosion_group, bonus_group
     copy = group.copy()
     for i in copy:
         if i.collide(other_object):
-            #..the colliding object should be removed from the group
-            if isBonus: #Asteroid collision
+            # ..the colliding object should be removed from the group
+            if isBonus:
                 process_bonus(i)
 
             explosion_group.add(Sprite(i.get_position(), [0, 0], 0, 0,
@@ -138,26 +131,27 @@ def group_collide (group, other_object, isBonus = False):
             return True
     return False
 
+
 def group_group_collide(group1, group2):
     copy = group1.copy()
     collisions = 0
     for i in copy:
-        if group_collide(group2,i):
+        if group_collide(group2, i):
             collisions += 1
             group1.discard(i)
     return collisions
 
 
-#helper functions to the interface
+# helper functions to the interface
 def reset():
-    global score,my_ship, lives, time, started, missile, \
-    rock_group, cant_rocks, missile_group, gameover, difficulty, \
+    global score, my_ship, lives, time, started, missile, \
+        rock_group, cant_rocks, missile_group, gameover, difficulty, \
         explosion_group, bonus_group
     explosion_group, difficulty
     score = 0
     lives = 3
     time = 0.5
-    difficulty = [-1,0.5]
+    difficulty = [-1, 0.5]
     started = False
     gameover = False
     missile = False
@@ -172,51 +166,54 @@ def reset():
     soundtrack.play()
 
 
-#Key handlers
+# Key handlers
 def keydown(key):
     global missile
-    if (started):
-        if (key == simplegui.KEY_MAP["left"]):
+    if started:
+        if key == simplegui.KEY_MAP["left"]:
             my_ship.turn("left")
-        elif (key == simplegui.KEY_MAP["right"]):
+        elif key == simplegui.KEY_MAP["right"]:
             my_ship.turn("right")
-        elif (key == simplegui.KEY_MAP["up"]):
+        elif key == simplegui.KEY_MAP["up"]:
             my_ship.thrust_on()
-        elif (key == simplegui.KEY_MAP["down"]):
+        elif key == simplegui.KEY_MAP["down"]:
             my_ship.thrust_off()
-        elif (key == simplegui.KEY_MAP["space"]):
+        elif key == simplegui.KEY_MAP["space"]:
             missile = True
             my_ship.shoot(missile_group)
 
 
 def keyup(key):
-    if (started):
-        if (key == simplegui.KEY_MAP["left"] or key == simplegui.KEY_MAP["right"]):
+    if started:
+        if key == simplegui.KEY_MAP["left"] or key == simplegui.KEY_MAP["right"]:
             my_ship.turn()
-        elif (key == simplegui.KEY_MAP["up"]):
+        elif key == simplegui.KEY_MAP["up"]:
             my_ship.thrust_off()
-        elif (key == simplegui.KEY_MAP["down"]):
+        elif key == simplegui.KEY_MAP["down"]:
             my_ship.thrust_off()
-        elif (key == simplegui.KEY_MAP["P"] or key == simplegui.KEY_MAP["p"]):
-            #TODO
+        elif key == simplegui.KEY_MAP["P"] or key == simplegui.KEY_MAP["p"]:
+            # TODO
             print "Pause"
+
 
 def mouse_handler(position):
     global started, gameover
-    if (not started or gameover):
+    if not started or gameover:
         reset()
         started = True
 
 
 def draw(canvas):
     global time, lives, score, cant_colli, cant_rocks, \
-        started, gameover,difficulty, seconds, scoreBonus, immortal
+        started, gameover, difficulty, seconds, scoreBonus, immortal
     # animate background
     time += 1
     wtime = (time / 4) % WIDTH
+    # Background
     center = debris_info.get_center()
     size = debris_info.get_size()
-    canvas.draw_image(nebula_image, nebula_info.get_center(), nebula_info.get_size(), 
+    canvas.draw_image(nebula_image, nebula_info.get_center(),
+                      nebula_info.get_size(),
                       [WIDTH / 2, HEIGHT / 2], [WIDTH, HEIGHT])
     canvas.draw_image(debris_image, center, size, (wtime - WIDTH / 2, HEIGHT / 2), (WIDTH, HEIGHT))
     canvas.draw_image(debris_image, center, size, (wtime + WIDTH / 2, HEIGHT / 2), (WIDTH, HEIGHT))
@@ -227,17 +224,17 @@ def draw(canvas):
         process_sprite_group(rock_group, canvas)
         process_sprite_group(bonus_group, canvas)
 
-        #Ship-Rocks Collisions
-        if group_collide (rock_group, my_ship, False):
+        # Ship-Rocks Collisions
+        if group_collide(rock_group, my_ship, False):
             if not immortal:
                 lives -= 1
             else:
-                score += 1;
+                score += 1
             cant_rocks -= 1
 
         group_collide(bonus_group, my_ship, True)
 
-        #game over
+        # game over
         if lives == -1:
             started = False
             gameover = True
@@ -249,19 +246,18 @@ def draw(canvas):
             lives = 0
             score = 0
 
-        #Rocks-Missiles Collisions
+        # Rocks-Missiles Collisions
         if missile:
             process_sprite_group(missile_group, canvas)
-            cant_colli = group_group_collide (missile_group, rock_group)
+            cant_colli = group_group_collide(missile_group, rock_group)
             if not scoreBonus:
-                score +=  cant_colli
+                score += cant_colli
             else:
-                score +=  cant_colli * 2
-            cant_rocks -=  cant_colli
-            if (cant_colli > 0 and difficulty[0] <= 1 and difficulty[1] <= 5):
+                score += cant_colli * 2
+            cant_rocks -= cant_colli
+            if cant_colli > 0 and difficulty[0] <= 1 and difficulty[1] <= 5:
                 difficulty[0] += 0.1
                 difficulty[1] += 0.1
-                print difficulty
 
         for explosion in explosion_group.copy():
             explosion.draw(canvas)
@@ -271,53 +267,57 @@ def draw(canvas):
             explosion.update()
     else:
         if gameover:
-            canvas.draw_image(gameover_image, splash_info.center, splash_info.size, 
-                              [WIDTH/2, HEIGHT/2], splash_info.size)
+            canvas.draw_image(gameover_image, splash_info.center, splash_info.size,
+                              [WIDTH / 2, HEIGHT / 2], splash_info.size)
             soundtrack.rewind()
             my_ship.stopShipSound()
             explosion_sound.rewind()
         else:
             canvas.draw_image(splash_image, splash_info.center, splash_info.size,
-                              [WIDTH/2, HEIGHT/2], splash_info.size)
+                              [WIDTH / 2, HEIGHT / 2], splash_info.size)
 
-    #score
-    canvas.draw_text("Lives", [30,30], 30, "White",  FONT)
+    # score
+    canvas.draw_text("Lives", [30, 30], 30, "White", FONT)
     if lives < 2:
-        canvas.draw_text(str(lives), [65,60], 30, "Red",  FONT)
+        canvas.draw_text(str(lives), [65, 60], 30, "Red", FONT)
     else:
-        canvas.draw_text(str(lives), [65,60], 30, "White",  FONT)
-    canvas.draw_text("Score", [650,30], 30, "White",  FONT)
-    canvas.draw_text(str(score), [688,60], 30, "White",  FONT)
+        canvas.draw_text(str(lives), [65, 60], 30, "White", FONT)
+    canvas.draw_text("Score", [650, 30], 30, "White", FONT)
+    canvas.draw_text(str(score), [688, 60], 30, "White", FONT)
 
-    #Bonus
+    # Bonus
     if scoreBonus:
         text = "Score time:" + str(10 - seconds)
         posX = 625
     elif immortal:
         text = "Immortal time:" + str(10 - seconds)
-        posX = 605
+        posX = 600
     else:
         posX = 0
         text = ""
-    canvas.draw_text(text, [posX,580], 20, "White",  FONT)
+    canvas.draw_text(text, [posX, 580], 20, "White", FONT)
+
 
 def getDataPosition():
-    angvel = random.choice([0.05,0.3]) * random.random()
+    angvel = random.choice([0.05, 0.3]) * random.random()
     vel = [random.choice(difficulty) * random.random(),
-                        random.choice(difficulty) * random.random()]
-    pos = [random.randint(1,WIDTH),random.randint(1,HEIGHT) ]
-    while (Utils().dist(my_ship.pos, pos) < (my_ship.get_radius() + SAFEDISTANCE)):
-                pos = [random.randint(1, WIDTH), random.randint(1, HEIGHT)]
+           random.choice(difficulty) * random.random()]
+    pos = [random.randint(1, WIDTH), random.randint(1, HEIGHT)]
+    while Utils().dist(my_ship.pos, pos) < \
+            (my_ship.get_radius() + SAFEDISTANCE):
+        pos = [random.randint(1, WIDTH), random.randint(1, HEIGHT)]
 
     return {"angle": angvel, "position": pos, "velocity": vel}
 
+
 # timer handler that spawns a rock
 def rock_spawner():
-    if (started):
+    if started:
         global rock_group, cant_rocks
-        if(cant_rocks < MAX_ROCKS):
+        if cant_rocks < MAX_ROCKS:
             data = getDataPosition()
-            rock_group.add(Sprite(data["position"], data["velocity"], 0, data["angle"], asteroid_image,
+            rock_group.add(Sprite(data["position"], data["velocity"],
+                                  0, data["angle"], asteroid_image,
                                   asteroid_info, WIDTH, HEIGHT))
             cant_rocks += 1
 
@@ -334,23 +334,22 @@ def bonus_spawner():
                 type = 1
 
             if random_bonus >= -0.5 and random_bonus < 0 and not scoreBonus:
-                #X 10 seg asteroide = +2ptos
                 bonus = bonus_image2
                 type = 2
 
-            if random_bonus >= 0 and random_bonus < 0.5:
-                #vida extra
+            if random_bonus >= 0 and random_bonus < 0.5 \
+                    and lives <= 4 and not immortal:
+                # extra life
                 bonus = bonus_image3
                 type = 3
 
             if random_bonus >= 0.5 and random_bonus <= 1 \
                     and len(bonus_group) == 0 and len(rock_group) > 4:
-                #Explotar todos los asteroides
                 bonus = bonus_image4
                 type = 4
 
-            #test
-            #type = 1
+            # test
+            # type = 1
             if bonus is not None:
                 exist = False
                 for i in bonus_group:
@@ -360,6 +359,7 @@ def bonus_spawner():
                 if not exist:
                     data = getDataPosition()
                     bonus_group.add(Bonus(data["position"], type, bonus))
+
 
 # initialize frame
 frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
@@ -377,4 +377,3 @@ timer2 = simplegui.create_timer(10000.0, bonus_spawner)
 timer.start()
 timer2.start()
 frame.start()
-

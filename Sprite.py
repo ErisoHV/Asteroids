@@ -19,8 +19,6 @@ class Sprite:
         self.parentWidth = Wwidth
         self.parentHeight = WHeight
 
-
-
         if sound:
             sound.rewind()
             sound.play()

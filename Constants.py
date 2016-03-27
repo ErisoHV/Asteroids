@@ -19,6 +19,7 @@ BONUS4 = RESOURCES + "bonus04.png"
 # purchased from sounddogs.com
 SOUNDTRACK = RESOURCES + "soundtrack.ogg"
 EXPLOSIONSOUND = RESOURCES + "explosion.ogg"
+TICKTOCKSOUND = RESOURCES + "ticktock.ogg"
 THRUST = RESOURCES + "thrust.ogg"
 SHOT = RESOURCES + "shot2.png"
 MISSILE = RESOURCES + "missile.ogg"
