@@ -1,6 +1,5 @@
 import simpleguitk as simplegui #win
 #import SimpleGUICS2Pygame.simpleguics2pygame as simplegui #linux
-#import simplegui
 from Sprite import Sprite
 from ImageInfo import ImageInfo
 from Utils import Utils
@@ -13,6 +12,17 @@ missile_info = ImageInfo([5,5], [10, 10], 3, 150)
 missile_image = simplegui.load_image(SHOT)
 
 missile_sound = simplegui.load_sound(MISSILE)
+
+FRICTION = 0.97
+FACTOR = 2
+
+ship_thrust_sound = simplegui.load_sound(THRUST)
+
+# missile image - shot1.png, shot2.png, shot3.png
+missile_info = ImageInfo([5,5], [10, 10], 3, 150)
+missile_image = simplegui.load_image(SHOT)
+missile_sound = simplegui.load_sound(MISSILE)
+
 missile_sound.set_volume(.5)
 
 # Ship class
