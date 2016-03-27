@@ -164,6 +164,7 @@ def reset():
     explosion_sound.rewind()
     soundtrack.rewind()
     soundtrack.play()
+    tick_tock_sound.rewind()
 
 
 # Key handlers
@@ -272,6 +273,7 @@ def draw(canvas):
             soundtrack.rewind()
             my_ship.stopShipSound()
             explosion_sound.rewind()
+            tick_tock_sound.rewind()
         else:
             canvas.draw_image(splash_image, splash_info.center, splash_info.size,
                               [WIDTH / 2, HEIGHT / 2], splash_info.size)
