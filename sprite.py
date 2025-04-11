@@ -52,6 +52,6 @@ class Sprite:
 
     def collide(self,other_object):
         d = Utils().dist(self.pos, other_object.get_position())
-        if (d < self.radius + other_object.get_radius()):
+        if d < self.radius + other_object.get_radius():
             return True
         return False
