@@ -1,4 +1,4 @@
-from Utils import Utils
+from utils import Utils
 # Sprite class
 
 

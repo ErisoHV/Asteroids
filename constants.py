@@ -5,7 +5,6 @@ RESOURCES = "http://127.0.0.1:8083/resources/"
 DEBRIS = RESOURCES + "debris2_blue.png"
 NEBULA = RESOURCES + "nebula_blue.f2013.png"
 SPLASH = RESOURCES + "splash.png"
-#https://googledrive.com/host/0B0ugO7CFvC4yNEVvc3dpamN6SFU/ricerocksgameover.png
 GAMEOVER = RESOURCES + "ricerocksgameover.png"
 SHIP = RESOURCES + "double_ship.png"
 ASTEROID = RESOURCES + "asteroid_blue.png"
