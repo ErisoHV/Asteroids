@@ -55,7 +55,7 @@ class Ship:
         #angle
         self.angle += self.angle_vel
         #velocity
-        if (self.thrust):
+        if self.thrust:
             #forward
             forward = Utils().angle_to_vector(self.angle)
             #acceleration
@@ -84,15 +84,17 @@ class Ship:
         ship_thrust_sound.rewind()
 
     def turn (self, direction = None):
-        if (direction == "right"):
-            self.angle_vel += 0.06
-        elif (direction == "left"):
-            self.angle_vel -= 0.06
+        if direction == "right":
+            self.angle_vel = 0.06
+        elif direction == "left":
+            self.angle_vel = -0.06
         #Stop!
         else:
             self.angle_vel = 0
 
     def shoot(self, missile_group):
+        if len(missile_group) >= 100:
+            return
         #global missile_group
         forward = Utils().angle_to_vector(self.angle)
         #tip of the ship cannon
@@ -105,6 +107,6 @@ class Ship:
                                  missile_info, self.parentWidth,
         self.parentHeight, missile_sound))
 
-    def stopShipSound(self):
+    def stop_ship_sound(self):
         ship_thrust_sound.rewind()
         missile_sound.rewind()

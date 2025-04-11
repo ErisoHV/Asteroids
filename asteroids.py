@@ -132,7 +132,7 @@ def group_collide(group, other_object, isBonus = False):
     copy = group.copy()
     for i in copy:
         if i.collide(other_object):
-            # ..the colliding object should be removed from the group
+            # the colliding object should be removed from the group
             if isBonus:
                 process_bonus(i)
 
@@ -209,10 +209,6 @@ def keyup(key):
         elif key == simplegui.KEY_MAP["P"] or key == simplegui.KEY_MAP["p"]:
             # TODO
             print ("Pause")
-        elif key == simplegui.KEY_MAP["P"] or key == simplegui.KEY_MAP["p"]:
-            #TODO
-            print ("Pause")
-
 
 def mouse_handler(position):
     global started, game_over
@@ -220,9 +216,8 @@ def mouse_handler(position):
         reset()
         started = True
 
-
 def draw(canvas):
-    global time, lives, score, cant_colli, rocks_number, \
+    global time, lives, score, cant_collision, rocks_number, \
         started, game_over, difficulty, seconds, scoreBonus, immortal
     # animate background
     time += 1
@@ -269,13 +264,13 @@ def draw(canvas):
         # Rocks-Missiles Collisions
         if missile:
             process_sprite_group(missile_group, canvas)
-            cant_colli = group_group_collide(missile_group, rock_group)
+            cant_collision = group_group_collide(missile_group, rock_group)
             if not scoreBonus:
-                score += cant_colli
+                score += cant_collision
             else:
-                score += cant_colli * 2
-            rocks_number -= cant_colli
-            if cant_colli > 0 and difficulty[0] <= 1 and difficulty[1] <= 5:
+                score += cant_collision * 2
+            rocks_number -= cant_collision
+            if cant_collision > 0 and difficulty[0] <= 1 and difficulty[1] <= 5:
                 difficulty[0] += 0.1
                 difficulty[1] += 0.1
 
@@ -290,7 +285,7 @@ def draw(canvas):
             canvas.draw_image(gameover_image, splash_info.center, splash_info.size,
                               [WIDTH / 2, HEIGHT / 2], splash_info.size)
             soundtrack.rewind()
-            my_ship.stopShipSound()
+            my_ship.stop_ship_sound()
             explosion_sound.rewind()
             tick_tock_sound.rewind()
         else:
@@ -319,36 +314,22 @@ def draw(canvas):
     canvas.draw_text(text, [posX, 580], 20, "White", FONT)
 
 
-def getDataPosition():
+def get_data_position():
     angvel = random.choice([0.05, 0.3]) * random.random()
     vel = [random.choice(difficulty) * random.random(),
            random.choice(difficulty) * random.random()]
     pos = [random.randint(1, WIDTH), random.randint(1, HEIGHT)]
-    while Utils().dist(my_ship.pos, pos) < \
-            (my_ship.get_radius() + SAFEDISTANCE):
+    while Utils().dist(my_ship.pos, pos) < (my_ship.get_radius() + SAFEDISTANCE):
         pos = [random.randint(1, WIDTH), random.randint(1, HEIGHT)]
 
     return {"angle": angvel, "position": pos, "velocity": vel}
-    #score
-    canvas.draw_text("Lives", [30,30], 30, "White",  FONT)
-    canvas.draw_text(str(lives), [65,60], 30, "White",  FONT)
-    canvas.draw_text("Score", [650,30], 30, "White",  FONT)
-    score = 1200
-    if score < 10:
-        canvas.draw_text(str(score), [688,60], 30, "White",  FONT)
-    if score >= 10 and score < 100:
-        canvas.draw_text(str(score), [680,60], 30, "White",  FONT)
-    if score >= 100 and score < 1000:
-        canvas.draw_text(str(score), [672,60], 30, "White",  FONT)
-    if score >= 1000 and score < 10000:
-        canvas.draw_text(str(score), [662,60], 30, "White",  FONT)
 
 # timer handler that spawns a rock
 def rock_spawner():
     if started:
         global rock_group, rocks_number
         if rocks_number < MAX_ROCKS:
-            data = getDataPosition()
+            data = get_data_position()
             rock_group.add(Sprite(data["position"], data["velocity"],
                                   0, data["angle"], asteroid_image,
                                   asteroid_info, WIDTH, HEIGHT))
@@ -357,41 +338,39 @@ def rock_spawner():
 
 def bonus_spawner():
     if started:
-        global bonus_group
+        global bonus_group, bonus_type
         if len(bonus_group) < MAX_BONUS:
             random_bonus = random.uniform(-1, 1)
             bonus = None
 
-            if random_bonus >= -1 and random_bonus < -0.5 and not immortal:
+            if -1 <= random_bonus < -0.5 and not immortal:
                 bonus = bonus_image1
-                type = 1
+                bonus_type = 1
 
-            if random_bonus >= -0.5 and random_bonus < 0 and not scoreBonus:
+            if -0.5 <= random_bonus < 0 and not scoreBonus:
                 bonus = bonus_image2
-                type = 2
+                bonus_type = 2
 
-            if random_bonus >= 0 and random_bonus < 0.5 \
-                    and lives <= 4 and not immortal:
+            if 0 <= random_bonus < 0.5 and lives <= 4 and not immortal:
                 # extra life
                 bonus = bonus_image3
-                type = 3
+                bonus_type = 3
 
-            if random_bonus >= 0.5 and random_bonus <= 1 \
-                    and len(bonus_group) == 0 and len(rock_group) > 4:
+            if 0.5 <= random_bonus <= 1 and len(bonus_group) == 0 and len(rock_group) > 4:
                 bonus = bonus_image4
-                type = 4
+                bonus_type = 4
 
             # test
             # type = 1
             if bonus is not None:
                 exist = False
                 for i in bonus_group:
-                    if i.type == type:
+                    if i.type == bonus_type:
                         exist = True
                         break
                 if not exist:
-                    data = getDataPosition()
-                    bonus_group.add(Bonus(data["position"], type, bonus))
+                    data = get_data_position()
+                    bonus_group.add(Bonus(data["position"], bonus_type, bonus))
 
 
 # initialize frame
