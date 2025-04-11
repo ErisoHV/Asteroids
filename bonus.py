@@ -1,10 +1,6 @@
-import simpleguitk as simplegui #win
-#import SimpleGUICS2Pygame.simpleguics2pygame as simplegui #linux
-
-from Sprite import *
-from ImageInfo import *
-from Constants import *
-
+from sprite import *
+from image_info import *
+from constants import *
 
 class Bonus:
 
